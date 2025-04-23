@@ -1,12 +1,23 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const path = require('path');
+
+
 
 
 const app = express();
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ["GET", "POST"]
+    }
+});
 
+
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 const port = 7000;
 
@@ -32,6 +43,6 @@ io.on('connection', (socket)=>{
 
 
 
-app.listen(port, ()=>{
+server.listen(port, '0.0.0.0', ()=>{
     console.log("ta rodando na porta 7000")
 });

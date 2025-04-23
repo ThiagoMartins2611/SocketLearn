@@ -13,9 +13,10 @@
         <button onclick="enviar()">Enviar</button>
       
 
-        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://192.168.56.1:7000/socket.io/socket.io.js"></script>
         <script>
-          const socket = io('');
+          const socket = io();
+
       
           const input = document.getElementById('msg');
           const mensagens = document.getElementById('mensagens');
