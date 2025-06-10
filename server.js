@@ -25,12 +25,23 @@ app.get('/', (req, res)=>{
 io.on('connection', (socket)=>{
     console.log("usuario conectado");
 
+
+
     socket.on('disconnect', ()=>{
-        console.log("usuario disconectado")
+        console.log("usuario disconectado");
     });
+
+    socket.on('chat message', (msg)=>{
+        io.emit('chat message', msg);
+    });
+
 });
+
+
+
+
 
 
 server.listen(7000, ()=>{
     console.log("o servidor está rodadndo na porta: 7000, http://localhost:7000")
-})
+});
