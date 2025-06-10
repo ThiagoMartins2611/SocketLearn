@@ -1,5 +1,5 @@
 
-//https://socket.io/docs/v4/tutorial/step-4 *acessa esse site Thiago ele vai te ensinar o caminho*
+//https://socket.io/docs/v4/tutorial/api-overview *acessa esse site Thiago ele vai te ensinar o caminho*
 
 import express from 'express';
 import { createServer } from 'node:http';
