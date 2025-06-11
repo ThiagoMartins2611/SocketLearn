@@ -101,9 +101,6 @@
           if (keys["s"]) pos.top += velocity;
           if (keys["a"]) pos.left -= velocity;
           if (keys["d"]) pos.left += velocity;
-
-
-
         
           
           quadrado.style.top = `${pos.top}px`;
@@ -111,18 +108,18 @@
 
           socket.emit('moveSquare', {x: pos.top, y: pos.left});
 
-          requestAnimationFrame(move); // Continua o loop suavemente
+          requestAnimationFrame(move); 
         }
 
-        move(); // Inicia a animação
+        move();
             
-        /*
+        
         socket.on('moveSquare', (pos)=>{
             quadradoAmigo.style.top = pos.x + 'px'
             quadradoAmigo.style.left = pos.y + 'px'
           
         });
-        */
+        
 
     </script>
 
