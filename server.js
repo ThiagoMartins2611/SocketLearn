@@ -18,7 +18,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.get('/', (req, res)=>{
     
     res.sendFile(join(__dirname,'public', 'index.html'));
-
+    
 });
 
 
@@ -33,6 +33,11 @@ io.on('connection', (socket)=>{
 
     socket.on('chat message', (msg)=>{
         io.emit('chat message', msg);
+    });
+
+
+    socket.on('moveSquare', (pos)=>{
+        io.emit('moveSquare', pos);
     });
 
 });
