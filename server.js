@@ -37,7 +37,7 @@ io.on('connection', (socket)=>{
 
 
     socket.on('moveSquare', (pos)=>{
-        io.emit('moveSquare', pos);
+        socket.broadcast.emit('moveSquare', pos)
     });
 
 });

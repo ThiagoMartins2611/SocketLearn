@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Socket.IO chat</title>
+    <title>WebSocket chat</title>
     <style>
 
       body{
@@ -106,7 +106,7 @@
           quadrado.style.top = `${pos.top}px`;
           quadrado.style.left = `${pos.left}px`;
 
-          socket.emit('moveSquare', {x: pos.top, y: pos.left});
+          socket.emit('moveSquare', { x: pos.left, y: pos.top });
 
           requestAnimationFrame(move); 
         }
@@ -115,8 +115,8 @@
             
         
         socket.on('moveSquare', (pos)=>{
-            quadradoAmigo.style.top = pos.x + 'px'
-            quadradoAmigo.style.left = pos.y + 'px'
+          quadradoAmigo.style.left = pos.x + 'px';
+          quadradoAmigo.style.top = pos.y + 'px';
           
         });
         
