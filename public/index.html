@@ -9,24 +9,16 @@
         position: relative;
       }
 
-      #quadrado{
+      .player{
         width: 100px;
         height: 100px;
         position: absolute;
-        background-color: red;
-      }
-
-      #quadradoAmigo{
-        width: 100px;
-        height: 100px;
-        position: absolute;
-        background-color: green;
       }
 
       
     </style>
   </head>
-  <body>
+  <body id="body">
     <ul id="messages"></ul>
 
 
@@ -39,88 +31,10 @@
 
     </form>
 
-    <div id="quadrado"></div>
-    <div id="quadradoAmigo"></div>
-
-
     <script src="/socket.io/socket.io.js"></script>
 
-    <script>
-         const socket = io();
-
-         const form = document.getElementById('form');
-         const input = document.getElementById('input');
-         const messages = document.getElementById('messages');
-         const inputNome = document.getElementById('inputNome');
-
-         form.addEventListener('submit', (e)=>{
-          
-            e.preventDefault()
-
-            if(input.value && inputNome.value){
-              socket.emit('chat message', {nome: inputNome.value, mensagem: input.value});
-              input.value = '';
-            }
-         });
-
-
-        socket.on('chat message', (msg)=>{
-          const item = document.createElement('li');
-          item.textContent = `${msg.nome}: ${msg.mensagem}`;
-          messages.appendChild(item);
-          window.scrollTo(0, document.body.scrollHeight)
-        });
-
-        
-
-        const velocity = 5;
-        const quadrado = document.getElementById('quadrado');
-        const quadradoAmigo = document.getElementById('quadradoAmigo');
-
-        quadrado.style.top = "0px";
-        quadrado.style.left = "0px";
-        quadrado.style.position = "absolute";
-
-        quadradoAmigo.style.position = "absolute";
-        quadradoAmigo.style.top = "0px";
-        quadradoAmigo.style.left = "0px"; // Posição inicial diferente
-
-        let pos = { top: 0, left: 0 };
-        let keys = {};
-
-        document.addEventListener('keydown', (e) => {
-          keys[e.key] = true;
-        });
-
-        document.addEventListener('keyup', (e) => {
-          keys[e.key] = false;
-        });
-
-        function move() {
-          if (keys["w"]) pos.top -= velocity;
-          if (keys["s"]) pos.top += velocity;
-          if (keys["a"]) pos.left -= velocity;
-          if (keys["d"]) pos.left += velocity;
-        
-          
-          quadrado.style.top = `${pos.top}px`;
-          quadrado.style.left = `${pos.left}px`;
-
-          socket.emit('moveSquare', { x: pos.left, y: pos.top });
-
-          requestAnimationFrame(move); 
-        }
-
-        move();
-            
-        
-        socket.on('moveSquare', (pos)=>{
-          quadradoAmigo.style.left = pos.x + 'px';
-          quadradoAmigo.style.top = pos.y + 'px';
-        });
-        
-
-    </script>
-
+    
+    <script src="./index.js" type="module"></script>
   </body>
+  
 </html>

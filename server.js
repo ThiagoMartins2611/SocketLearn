@@ -13,33 +13,78 @@ const io = new Server(server);
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use(express.static(join(__dirname, 'public')));
+
+const players = [];
+
+let idPlayer = 0;
+
+
+function generateColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+
+    return color;
+
+}
+
+
 
 
 app.get('/', (req, res)=>{
     
     res.sendFile(join(__dirname,'public', 'index.html'));
-    
 });
 
 
-io.on('connection', (socket)=>{
-    console.log("usuario conectado");
 
 
+io.on('connection', (socket) => {
+    console.log("usuário conectado");
 
-    socket.on('disconnect', ()=>{
-        console.log("usuario disconectado");
-    });
+ 
+  const meuId = idPlayer++;
+  const playerObj = {
+        id: meuId,
+        posX: 0,
+        posY: 0,
+        color: generateColor() // cor única para cada jogador
+    };
+  players.push(playerObj);
 
-    socket.on('chat message', (msg)=>{
+
+ 
+    socket.emit('allPlayers', players);
+
+ 
+    socket.broadcast.emit('playerSpawn', playerObj);
+
+
+  
+
+
+  socket.on('disconnect', () => {
+    console.log("usuário desconectado");
+    // Você pode também avisar os outros que este player saiu:
+    socket.broadcast.emit('playerDisconnect', meuId);
+
+    const index = players.findIndex(p => p.id === meuId);
+    if (index !== -1) {
+        players.splice(index, 1); 
+    }
+  });
+
+    socket.on('chat message', (msg) => {
         io.emit('chat message', msg);
     });
 
-
-    socket.on('moveSquare', (pos)=>{
-        socket.broadcast.emit('moveSquare', pos)
+    socket.on('moveSquare', (pos) => {
+        socket.broadcast.emit('moveSquare', pos);
     });
-
 });
 
 
