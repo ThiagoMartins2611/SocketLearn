@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         this.posX = 0;
         this.posY = 0;
         this.color = null
+        this.ipUser = null;
     }
 
 
@@ -19,9 +20,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
         this.id = playerInfo.id;
         this.posX = playerInfo.posX;
         this.posY = playerInfo.posY;
-        this.color = playerInfo.color
+        this.color = playerInfo.color;
+        this.ipUser = playerInfo.ipUser;
 
-        player.id = `player-${playerInfo.id}`;
+        player.id = `${playerInfo.id}`;
 
         player.innerText = this.id;
         player.style.backgroundColor = this.color
@@ -34,6 +36,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 const socket = io();
 
+let meuPlayerId;
+
+
+
 
 socket.on('allPlayers', (listaDePlayers) => {
   listaDePlayers.forEach((playerInfo) => {
@@ -45,12 +51,13 @@ socket.on('allPlayers', (listaDePlayers) => {
 socket.on('playerSpawn', playerInfo => {
   const player = new Player();
   player.Create(playerInfo);
+  meuPlayerId = playerInfo.id;
   console.log("eu:", playerInfo);
 });
 
 
 socket.on('playerDisconnect', (idDoJogador) => {
-  const playerElement = document.getElementById(`player-${idDoJogador}`);
+  const playerElement = document.getElementById(`${idDoJogador}`);
   if (playerElement) {
     playerElement.remove();
   }
@@ -92,14 +99,12 @@ socket.on('chat message', (msg)=>{
 ///////////////////////////////////////////////////////////////////////////
 
 
-
+//CONTROLES
 
 
 
 const velocity = 5;
-
-
-let pos = { top: 0, left: 0 };
+let pos = {top:0, left:0};
 let keys = {};
 
 document.addEventListener('keydown', (e) => {
@@ -110,13 +115,22 @@ document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
 
+
 function move() {
+  
+    if (!meuPlayerId) return;
+
+    
     if (keys["w"]) pos.top -= velocity;
     if (keys["s"]) pos.top += velocity;
     if (keys["a"]) pos.left -= velocity;
     if (keys["d"]) pos.left += velocity;
 
-    
+const playerUser = document.getElementById(`${meuPlayerId}`);
+if (playerUser) {
+  playerUser.style.left = `${pos.left}px`;
+  playerUser.style.top = `${pos.top}px`;
+}
 
 
     socket.emit('moveSquare', { x: pos.left, y: pos.top });
@@ -124,11 +138,17 @@ function move() {
     requestAnimationFrame(move); 
 }
 
-move();
+requestAnimationFrame(move)
+
     
 
-socket.on('moveSquare', (pos)=>{
-
+socket.on('moveSquare', ()=>{
+  const { x, y, id } = data;
+  const playerElement = document.getElementById(`${id}`);
+  if (playerElement) {
+    playerElement.style.left = `${x}px`;
+    playerElement.style.top = `${y}px`;
+  }
 });
 
 });

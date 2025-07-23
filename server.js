@@ -18,6 +18,7 @@ app.use(express.static(join(__dirname, 'public')));
 const players = [];
 
 let idPlayer = 0;
+let ipUser = "";
 
 
 function generateColor() {
@@ -35,38 +36,30 @@ function generateColor() {
 
 
 
-app.get('/', (req, res)=>{
-    
-    res.sendFile(join(__dirname,'public', 'index.html'));
-});
-
-
-
-
 io.on('connection', (socket) => {
     console.log("usuário conectado");
 
+    const rawIp = socket.handshake.address;
+    const ipUser = rawIp.replace(/f/g, "").replace(/:/g, "");
  
   const meuId = idPlayer++;
   const playerObj = {
         id: meuId,
         posX: 0,
         posY: 0,
-        color: generateColor() // cor única para cada jogador
+        color: generateColor(),
+        ipUser
     };
   players.push(playerObj);
 
 
  
     socket.emit('allPlayers', players);
-
- 
+    socket.emit('playerSpawn', playerObj);
     socket.broadcast.emit('playerSpawn', playerObj);
 
 
   
-
-
   socket.on('disconnect', () => {
     console.log("usuário desconectado");
     // Você pode também avisar os outros que este player saiu:
@@ -83,7 +76,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('moveSquare', (pos) => {
-        socket.broadcast.emit('moveSquare', pos);
+        socket.broadcast.emit('moveSquare', {
+            id: meuId,
+            x: pos.x,
+            y: pos.y
+        });
     });
 });
 
