@@ -41,35 +41,30 @@ io.on('connection', (socket) => {
 
     const rawIp = socket.handshake.address;
     const ipUser = rawIp.replace(/f/g, "").replace(/:/g, "");
- 
-  const meuId = idPlayer++;
-  const playerObj = {
+    const meuId = `player-${ipUser}-${Date.now()}`;
+
+    const playerObj = {
         id: meuId,
         posX: 0,
         posY: 0,
         color: generateColor(),
         ipUser
     };
-  players.push(playerObj);
 
+    players.push(playerObj);
 
- 
     socket.emit('allPlayers', players);
     socket.emit('playerSpawn', playerObj);
     socket.broadcast.emit('playerSpawn', playerObj);
 
-
-  
-  socket.on('disconnect', () => {
-    console.log("usuário desconectado");
-    // Você pode também avisar os outros que este player saiu:
-    socket.broadcast.emit('playerDisconnect', meuId);
-
-    const index = players.findIndex(p => p.id === meuId);
-    if (index !== -1) {
-        players.splice(index, 1); 
-    }
-  });
+    socket.on('disconnect', () => {
+        console.log("usuário desconectado");
+        socket.broadcast.emit('playerDisconnect', meuId);
+        const index = players.findIndex(p => p.id === meuId);
+        if (index !== -1) {
+            players.splice(index, 1); 
+        }
+    });
 
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg);
@@ -83,8 +78,6 @@ io.on('connection', (socket) => {
         });
     });
 });
-
-
 
 
 
