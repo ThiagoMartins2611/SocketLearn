@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
         const body = document.getElementById('body');
         const player = document.createElement('div');
+        const name = document.createElement('h4');
+
         player.className = 'player'
         
 
@@ -25,11 +27,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
         player.id = `${playerInfo.id}`;
 
-        player.innerText = this.id;
+        const ip = this.id.slice(0, -14).slice(7);
+        name.innerText = ip;
+
+
         player.style.backgroundColor = this.color
         player.style.left = `${this.posX}px`;
         player.style.top = `${this.posY}px`;
 
+        player.appendChild(name)
         body.appendChild(player)
         
         
@@ -135,11 +141,11 @@ function move() {
   
   
 
-    
-    if (keys["w"]) pos.top -= velocity;
-    if (keys["s"]) pos.top += velocity;
-    if (keys["a"]) pos.left -= velocity;
-    if (keys["d"]) pos.left += velocity;
+   
+    if (keys["w"] || keys["ArrowUp"]) pos.top -= velocity;
+    if (keys["s"] || keys["ArrowDown"]) pos.top += velocity;
+    if (keys["a"] || keys["ArrowLeft"]) pos.left -= velocity;
+    if (keys["d"] || keys["ArrowRight"]) pos.left += velocity;
 
 const playerUser = document.getElementById(`${meuPlayerId}`);
 
