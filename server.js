@@ -52,9 +52,10 @@ io.on('connection', (socket) => {
     };
 
     players.push(playerObj);
-
-    socket.emit('allPlayers', players);
+    
     socket.emit('playerSpawn', playerObj);
+    socket.emit('allPlayers', players);
+    
     socket.broadcast.emit('playerSpawn', playerObj);
 
     socket.on('disconnect', () => {
@@ -71,6 +72,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('moveSquare', (pos) => {
+        const player = players.find(p => p.id === meuId);
+
+        if (player) {
+            player.posX = pos.x;
+            player.posY = pos.y;
+        }
+
         socket.broadcast.emit('moveSquare', {
             id: meuId,
             x: pos.x,

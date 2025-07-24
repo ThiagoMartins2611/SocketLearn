@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
         player.innerText = this.id;
         player.style.backgroundColor = this.color
+        player.style.left = `${this.posX}px`;
+        player.style.top = `${this.posY}px`;
 
         body.appendChild(player)
         
@@ -42,16 +44,29 @@ let meuPlayerId;
 
 
 socket.on('allPlayers', (listaDePlayers) => {
+
   listaDePlayers.forEach((playerInfo) => {
-    const player = new Player();
-    player.Create(playerInfo);
+
+    if(!document.getElementById(playerInfo.id)){
+      const player = new Player();
+      player.Create(playerInfo);
+    }
+ 
   });
+
+
 });
 
 socket.on('playerSpawn', playerInfo => {
   const player = new Player();
   player.Create(playerInfo);
-  meuPlayerId = playerInfo.id;
+
+  if (playerInfo.ipUser === socket.id || !meuPlayerId) {
+    meuPlayerId = playerInfo.id;
+    pos.left = playerInfo.posX;
+    pos.top = playerInfo.posY;
+  }
+
   console.log("eu:", playerInfo);
 });
 
@@ -118,7 +133,7 @@ document.addEventListener('keyup', (e) => {
 
 function move() {
   
-    if (!meuPlayerId) return;
+  
 
     
     if (keys["w"]) pos.top -= velocity;
@@ -127,6 +142,7 @@ function move() {
     if (keys["d"]) pos.left += velocity;
 
 const playerUser = document.getElementById(`${meuPlayerId}`);
+
 if (playerUser) {
   playerUser.style.left = `${pos.left}px`;
   playerUser.style.top = `${pos.top}px`;
@@ -142,7 +158,7 @@ requestAnimationFrame(move)
 
     
 
-socket.on('moveSquare', ()=>{
+socket.on('moveSquare', (data)=>{
   const { x, y, id } = data;
   const playerElement = document.getElementById(`${id}`);
   if (playerElement) {
