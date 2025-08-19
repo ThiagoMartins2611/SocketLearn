@@ -1,27 +1,147 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>WebSocket chat</title>
-    <link rel="stylesheet" href="index.css">
-  </head>
-  <body id="body">
-    <ul id="messages"></ul>
-
-
-    <form id="form" action="">
-
-      <input id="inputNome" autocomplete="off" />
-      <input id="input" autocomplete="off" />
-      
-      <button>Send</button>
-
-    </form>
-
-    <script src="/socket.io/socket.io.js"></script>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boas-vindas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
-    <script src="./index.js" type="module"></script>
-  </body>
-  
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #e0eafc;
+            background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: fadeIn 1s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fadeIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #5d6d7c;
+            margin-bottom: 2rem;
+            position: relative;
+            letter-spacing: 1px;
+        }
+
+        header h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: #5d6d7c;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 400;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #7a94a9;
+            box-shadow: 0 0 10px rgba(122, 148, 169, 0.2);
+        }
+
+        input[type="text"]::placeholder {
+            color: #aaa;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+            letter-spacing: 1px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 242, 254, 0.6);
+        }
+    </style>
+
+
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Bem-vindo!</h1>
+        </header>
+
+        <main>
+            <form id="formsId">
+                <div class="form-group">
+                    <label for="nome">Nome do Player</label>
+                    <input type="text" id="nome" name="nome" placeholder="Digite seu nome">
+                </div>
+                <button id="button" type="submit">Entrar</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        const forms = document.getElementById("formsId");
+        forms.addEventListener('submit', (event)=>{
+            event.preventDefault();
+        })
+          
+        
+    </script>
+</body>
 </html>
