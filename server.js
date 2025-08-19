@@ -21,6 +21,8 @@ let idPlayer = 0;
 let ipUser = "";
 
 app.get('/jogo', (req, res) => {
+    const name = req.params;
+    console.log(name)
     res.sendFile(join(__dirname, 'public', 'jogo.html'));
 });
 
