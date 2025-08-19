@@ -1,5 +1,7 @@
 body{
     position: relative;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 .player {
@@ -20,3 +22,4 @@ body{
     margin: 0;
     font-weight: bold;
 }
+
