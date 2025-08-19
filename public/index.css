@@ -10,7 +10,10 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+
 }
+
+
 
 .player h4 {
     transform: translateY(-20px);

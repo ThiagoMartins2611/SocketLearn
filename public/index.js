@@ -24,11 +24,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         this.posY = playerInfo.posY;
         this.color = playerInfo.color;
         this.ipUser = playerInfo.ipUser;
+        this.name = playerInfo.name
 
         player.id = `${playerInfo.id}`;
 
-        const ip = this.id.slice(0, -14).slice(7);
-        name.innerText = ip;
+        
+        name.innerText = this.name;
 
 
         player.style.backgroundColor = this.color
@@ -46,7 +47,10 @@ const socket = io();
 
 let meuPlayerId;
 
+const urlParams = new URLSearchParams(window.location.search);
+const playerName = urlParams.get('nome');
 
+socket.emit('playerInfo', { name: playerName });
 
 
 socket.on('allPlayers', (listaDePlayers) => {

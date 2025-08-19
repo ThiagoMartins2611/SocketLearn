@@ -21,8 +21,6 @@ let idPlayer = 0;
 let ipUser = "";
 
 app.get('/jogo', (req, res) => {
-    const name = req.params;
-    console.log(name)
     res.sendFile(join(__dirname, 'public', 'jogo.html'));
 });
 
@@ -44,25 +42,31 @@ function generateColor() {
 
 io.on('connection', (socket) => {
     console.log("usuário conectado");
+        const rawIp = socket.handshake.address;
+        const ipUser = rawIp.replace(/f/g, "").replace(/:/g, "");
+        const meuId = `player-${ipUser}-${Date.now()}`;
 
-    const rawIp = socket.handshake.address;
-    const ipUser = rawIp.replace(/f/g, "").replace(/:/g, "");
-    const meuId = `player-${ipUser}-${Date.now()}`;
+    // Ouça o evento 'playerInfo' enviado pelo cliente
+    socket.on('playerInfo', (info) => {
+        const playerName = info.name;
+        
+        // Aqui você pode continuar a criar o objeto do jogador
+     
+        const playerObj = {
+            id: meuId,
+            name: playerName, // Adicione o nome ao objeto do jogador
+            posX: 0,
+            posY: 0,
+            color: generateColor(),
+            ipUser
+        };
 
-    const playerObj = {
-        id: meuId,
-        posX: 0,
-        posY: 0,
-        color: generateColor(),
-        ipUser
-    };
+        players.push(playerObj);
 
-    players.push(playerObj);
-    
-    socket.emit('playerSpawn', playerObj);
-    socket.emit('allPlayers', players);
-    
-    socket.broadcast.emit('playerSpawn', playerObj);
+        socket.emit('playerSpawn', playerObj);
+        socket.emit('allPlayers', players);
+        socket.broadcast.emit('playerSpawn', playerObj);
+    });
 
     socket.on('disconnect', () => {
         console.log("usuário desconectado");
@@ -92,7 +96,6 @@ io.on('connection', (socket) => {
         });
     });
 });
-
 
 
 
