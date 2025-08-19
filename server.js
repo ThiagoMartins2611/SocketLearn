@@ -20,6 +20,10 @@ const players = [];
 let idPlayer = 0;
 let ipUser = "";
 
+app.get('/jogo', (req, res) => {
+    res.sendFile(join(__dirname, 'public', 'jogo.html'));
+});
+
 
 function generateColor() {
     const letters = '0123456789ABCDEF';

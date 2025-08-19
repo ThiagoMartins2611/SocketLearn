@@ -139,8 +139,22 @@
         const forms = document.getElementById("formsId");
         forms.addEventListener('submit', (event)=>{
             event.preventDefault();
-        })
-          
+        });
+        
+        const button = document.getElementById("button");
+        button.addEventListener('click', (event)=>{
+
+            const input = document.getElementById("nome");
+            const inputValue = input.value;
+
+            if(inputValue === ""){
+                alert("Coloque um valor valido");
+            }else{
+                window.location.href = `/jogo?${inputValue}`;
+            }
+
+
+        });
         
     </script>
 </body>
