@@ -172,7 +172,7 @@ function move() {
   if (keys["a"] || keys["ArrowLeft"]) newPos.left -= velocity;
   if (keys["d"] || keys["ArrowRight"]) newPos.left += velocity;
 
-  // Verifique e aplique os limites
+
   if (newPos.left >= minX && newPos.left <= maxX) {
     pos.left = newPos.left;
   }
