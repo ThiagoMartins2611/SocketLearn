@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     Create(playerInfo) {
 
 
-        const body = document.getElementById('body');
+        const arena = document.getElementById('arena');
         const player = document.createElement('div');
         const name = document.createElement('h4');
 
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         player.style.top = `${this.posY}px`;
 
         player.appendChild(name)
-        body.appendChild(player)
+        arena.appendChild(player)
         
         
     }
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 const socket = io();
 
 let meuPlayerId;
+
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerName = urlParams.get('nome');
@@ -70,6 +71,7 @@ socket.on('allPlayers', (listaDePlayers) => {
 socket.on('playerSpawn', playerInfo => {
   const player = new Player();
   player.Create(playerInfo);
+  
 
   if (playerInfo.ipUser === socket.id || !meuPlayerId) {
     meuPlayerId = playerInfo.id;
@@ -129,8 +131,13 @@ socket.on('chat message', (msg)=>{
 
 
 const velocity = 5;
+
+
+const playerSize = {x: 50, y: 50}
 let pos = {top:0, left:0};
+
 let keys = {};
+
 
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
@@ -142,14 +149,39 @@ document.addEventListener('keyup', (e) => {
 
 
 function move() {
-  
-  
 
-   
-    if (keys["w"] || keys["ArrowUp"]) pos.top -= velocity;
-    if (keys["s"] || keys["ArrowDown"]) pos.top += velocity;
-    if (keys["a"] || keys["ArrowLeft"]) pos.left -= velocity;
-    if (keys["d"] || keys["ArrowRight"]) pos.left += velocity;
+  const arena = document.getElementById("arena");
+
+  const arenaInfo = {
+    size: {x: arena.getBoundingClientRect().width, y: arena.getBoundingClientRect().height}, 
+    pos: {x: arena.getBoundingClientRect().left, y: arena.getBoundingClientRect().top}
+  };
+
+  const minX = arenaInfo.pos.x;
+  const minY = arenaInfo.pos.y;
+
+
+  const maxX = arenaInfo.size.x - playerSize.x;
+  const maxY = arenaInfo.size.y - playerSize.y;
+
+
+
+    let newPos = {...pos};
+  if (keys["w"] || keys["ArrowUp"]) newPos.top -= velocity;
+  if (keys["s"] || keys["ArrowDown"]) newPos.top += velocity;
+  if (keys["a"] || keys["ArrowLeft"]) newPos.left -= velocity;
+  if (keys["d"] || keys["ArrowRight"]) newPos.left += velocity;
+
+  // Verifique e aplique os limites
+  if (newPos.left >= minX && newPos.left <= maxX) {
+    pos.left = newPos.left;
+  }
+  if (newPos.top >= minY && newPos.top <= maxY) {
+    pos.top = newPos.top;
+  }
+  
+  pos.left = Math.max(minX, Math.min(pos.left, maxX));
+  pos.top = Math.max(minY, Math.min(pos.top, maxY));
 
 const playerUser = document.getElementById(`${meuPlayerId}`);
 
@@ -176,6 +208,7 @@ socket.on('moveSquare', (data)=>{
     playerElement.style.top = `${y}px`;
   }
 });
+
 
 });
 

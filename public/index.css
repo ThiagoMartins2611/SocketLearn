@@ -23,3 +23,7 @@ body{
     font-weight: bold;
 }
 
+#arena{
+    width: 90vw;
+    height: 90vh;
+}
