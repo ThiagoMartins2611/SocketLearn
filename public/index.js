@@ -102,14 +102,14 @@ socket.on('playerDisconnect', (idDoJogador) => {
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const messages = document.getElementById('messages');
-const inputNome = document.getElementById('inputNome');
+
 
 form.addEventListener('submit', (e)=>{
 
     e.preventDefault()
 
-    if(input.value && inputNome.value){
-        socket.emit('chat message', {nome: inputNome.value, mensagem: input.value});
+    if(input.value != ""){
+        socket.emit('chat message', {nome: playerName, mensagem: input.value});
         input.value = '';
     }
 });
@@ -135,7 +135,7 @@ const velocity = 5;
 
 const playerSize = {x: 50, y: 50}
 let pos = {top:0, left:0};
-
+ let newPos = {...pos};
 let keys = {};
 
 
@@ -153,42 +153,37 @@ function move() {
   const arena = document.getElementById("arena");
 
   const arenaInfo = {
-    size: {x: arena.getBoundingClientRect().width, y: arena.getBoundingClientRect().height}, 
-    pos: {x: arena.getBoundingClientRect().left, y: arena.getBoundingClientRect().top}
+    size: {x: arena.clientWidth, y: arena.clientHeight}
   };
 
-  const minX = arenaInfo.pos.x;
-  const minY = arenaInfo.pos.y;
-
+  const minX = 0;
+  const minY = 0;
 
   const maxX = arenaInfo.size.x - playerSize.x;
   const maxY = arenaInfo.size.y - playerSize.y;
 
 
 
-    let newPos = {...pos};
+   
   if (keys["w"] || keys["ArrowUp"]) newPos.top -= velocity;
   if (keys["s"] || keys["ArrowDown"]) newPos.top += velocity;
   if (keys["a"] || keys["ArrowLeft"]) newPos.left -= velocity;
   if (keys["d"] || keys["ArrowRight"]) newPos.left += velocity;
 
 
-  if (newPos.left >= minX && newPos.left <= maxX) {
-    pos.left = newPos.left;
-  }
-  if (newPos.top >= minY && newPos.top <= maxY) {
-    pos.top = newPos.top;
-  }
-  
-  pos.left = Math.max(minX, Math.min(pos.left, maxX));
-  pos.top = Math.max(minY, Math.min(pos.top, maxY));
 
-const playerUser = document.getElementById(`${meuPlayerId}`);
+  newPos.left = Math.max(minX, Math.min(maxX, newPos.left));
+  newPos.top = Math.max(minY, Math.min(maxY, newPos.top));
 
-if (playerUser) {
-  playerUser.style.left = `${pos.left}px`;
-  playerUser.style.top = `${pos.top}px`;
-}
+
+  pos = { ...newPos };
+
+  const playerUser = document.getElementById(`${meuPlayerId}`);
+
+  if (playerUser) {
+    playerUser.style.left = `${pos.left}px`;
+    playerUser.style.top = `${pos.top}px`;
+  }
 
 
     socket.emit('moveSquare', { x: pos.left, y: pos.top });
