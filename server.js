@@ -38,7 +38,10 @@ function generateColor() {
 }
 
 
-
+const ARENA_WIDTH = 1440; 
+const ARENA_HEIGHT = 720; 
+const PLAYER_SIZE = 50;
+const VELOCITY = 5;
 
 io.on('connection', (socket) => {
     console.log("usuário conectado");
@@ -66,6 +69,43 @@ io.on('connection', (socket) => {
         socket.emit('playerSpawn', playerObj);
         socket.emit('allPlayers', players);
         socket.broadcast.emit('playerSpawn', playerObj);
+    });
+
+
+
+
+    socket.on('playerMovement', (keys) => {
+        const player = players.find(p => p.id === meuId);
+
+        if (player) {
+            let newX = player.posX;
+            let newY = player.posY;
+
+            // Calcule a nova posição com base nas teclas pressionadas
+            if (keys.w) newY -= VELOCITY;
+            if (keys.s) newY += VELOCITY;
+            if (keys.a) newX -= VELOCITY;
+            if (keys.d) newX += VELOCITY;
+
+            // Aplique os limites da arena no servidor
+            const minX = 0;
+            const minY = 0;
+            const maxX = ARENA_WIDTH - PLAYER_SIZE*2;
+            const maxY = ARENA_HEIGHT - PLAYER_SIZE;
+
+            newX = Math.max(minX, Math.min(maxX, newX));
+            newY = Math.max(minY, Math.min(maxY, newY));
+
+            player.posX = newX;
+            player.posY = newY;
+
+            // Emita a posição corrigida para TODOS os jogadores (incluindo o que se moveu)
+            io.emit('moveSquare', {
+                id: meuId,
+                x: player.posX,
+                y: player.posY
+            });
+        }
     });
 
     socket.on('disconnect', () => {
@@ -96,6 +136,8 @@ io.on('connection', (socket) => {
         });
     });
 });
+
+
 
 
 
