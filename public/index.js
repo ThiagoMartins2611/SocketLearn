@@ -137,53 +137,32 @@ const playerSize = {x: 50, y: 50}
 let pos = {top:0, left:0};
  let newPos = {...pos};
 let keys = {};
+let pendingInputs = [];
 
 
-document.addEventListener('keydown', (e) => {
-    keys[e.key] = true;
-});
+// ... (código existente para `DOMContentLoaded` e `Player` class)
 
-document.addEventListener('keyup', (e) => {
-    keys[e.key] = false;
-});
+// Adicione uma nova função para processar as entradas
+function processInput() {
+    let input = {
+        w: keys["w"] || keys["ArrowUp"],
+        s: keys["s"] || keys["ArrowDown"],
+        a: keys["a"] || keys["ArrowLeft"],
+        d: keys["d"] || keys["ArrowRight"],
+        timestamp: Date.now() // Use um timestamp para rastrear a ordem
+    };
+    
+    // Mova o jogador imediatamente (PREDIÇÃO)
+    const playerUser = document.getElementById(meuPlayerId);
+    if (playerUser) {
+        if (input.w) pos.top -= velocity;
+        if (input.s) pos.top += velocity;
+        if (input.a) pos.left -= velocity;
+        if (input.d) pos.left += velocity;
 
-
-function move() {
-
-  const arena = document.getElementById("arena");
-
-  const arenaInfo = {
-    size: {x: arena.clientWidth, y: arena.clientHeight}
-  };
-
-  const minX = 0;
-  const minY = 0;
-
-  const maxX = arenaInfo.size.x - playerSize.x;
-  const maxY = arenaInfo.size.y - playerSize.y;
-
-
-
-   
-  if (keys["w"] || keys["ArrowUp"]) newPos.top -= velocity;
-  if (keys["s"] || keys["ArrowDown"]) newPos.top += velocity;
-  if (keys["a"] || keys["ArrowLeft"]) newPos.left -= velocity;
-  if (keys["d"] || keys["ArrowRight"]) newPos.left += velocity;
-
-
-
-  newPos.left = Math.max(minX, Math.min(maxX, newPos.left));
-  newPos.top = Math.max(minY, Math.min(maxY, newPos.top));
-
-
-  pos = { ...newPos };
-
-  const playerUser = document.getElementById(`${meuPlayerId}`);
-
-  if (playerUser) {
-    playerUser.style.left = `${pos.left}px`;
-    playerUser.style.top = `${pos.top}px`;
-  }
+        playerUser.style.left = `${pos.left}px`;
+        playerUser.style.top = `${pos.top}px`;
+    }
 
 
     socket.emit('moveSquare', { x: pos.left, y: pos.top });
