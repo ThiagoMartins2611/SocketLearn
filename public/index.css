@@ -16,7 +16,7 @@ html{
 .player {
     width: 50px;
     height: 50px;
-    position: relative;
+    position: absolute;
     background-color: orange;
     display: flex;
     flex-direction: column;
@@ -37,6 +37,8 @@ html{
     height: 720px;
     background-color: cornsilk;
     border: 2px black solid;
+    box-sizing: border-box;
+    position: relative;
 }
 
 
@@ -51,6 +53,7 @@ html{
     position: fixed; 
     transform: translate(-50%, -50%); 
     pointer-events: none; 
+    z-index: 9999999;
 }
 
 
