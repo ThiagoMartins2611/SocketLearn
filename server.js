@@ -74,40 +74,6 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on('playerMovement', (keys) => {
-        const player = players.find(p => p.id === meuId);
-
-        if (player) {
-            let newX = player.posX;
-            let newY = player.posY;
-
-            // Calcule a nova posição com base nas teclas pressionadas
-            if (keys.w) newY -= VELOCITY;
-            if (keys.s) newY += VELOCITY;
-            if (keys.a) newX -= VELOCITY;
-            if (keys.d) newX += VELOCITY;
-
-            // Aplique os limites da arena no servidor
-            const minX = 0;
-            const minY = 0;
-            const maxX = ARENA_WIDTH - PLAYER_SIZE*2;
-            const maxY = ARENA_HEIGHT - PLAYER_SIZE;
-
-            newX = Math.max(minX, Math.min(maxX, newX));
-            newY = Math.max(minY, Math.min(maxY, newY));
-
-            player.posX = newX;
-            player.posY = newY;
-
-            // Emita a posição corrigida para TODOS os jogadores (incluindo o que se moveu)
-            io.emit('moveSquare', {
-                id: meuId,
-                x: player.posX,
-                y: player.posY
-            });
-        }
-    });
-
     socket.on('disconnect', () => {
         console.log("usuário desconectado");
         socket.broadcast.emit('playerDisconnect', meuId);
@@ -121,19 +87,31 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 
-    socket.on('moveSquare', (pos) => {
+   socket.on('moveSquare', (pos) => {
         const player = players.find(p => p.id === meuId);
 
         if (player) {
-            player.posX = pos.x;
-            player.posY = pos.y;
-        }
+            // Garante que a posição recebida do cliente esteja dentro dos limites da arena
+            const minX = 0;
+            const minY = 0;
+            const maxX = ARENA_WIDTH - PLAYER_SIZE;
+            const maxY = ARENA_HEIGHT - PLAYER_SIZE;
 
-        socket.broadcast.emit('moveSquare', {
-            id: meuId,
-            x: pos.x,
-            y: pos.y
-        });
+            // Valida e restringe as coordenadas x e y
+            const validatedX = Math.max(minX, Math.min(maxX, pos.x));
+            const validatedY = Math.max(minY, Math.min(maxY, pos.y));
+            
+            player.posX = validatedX;
+            player.posY = validatedY;
+
+            // Emite a posição validada pelo servidor para TODOS os clientes, incluindo quem se moveu.
+            // Usar io.emit() em vez de socket.broadcast.emit() garante que todos recebam a posição correta.
+            io.emit('moveSquare', {
+                id: meuId,
+                x: player.posX,
+                y: player.posY
+            });
+        }
     });
 });
 

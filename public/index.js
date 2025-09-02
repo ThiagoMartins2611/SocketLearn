@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         this.posY = playerInfo.posY;
         this.color = playerInfo.color;
         this.ipUser = playerInfo.ipUser;
-        this.name = playerInfo.name
+        this.name = playerInfo.name;
 
         player.id = `${playerInfo.id}`;
 
@@ -199,8 +199,10 @@ socket.on('moveSquare', (data)=>{
   const { x, y, id } = data;
   const playerElement = document.getElementById(`${id}`);
   if (playerElement) {
-    playerElement.style.left = `${x}px`;
+      
     playerElement.style.top = `${y}px`;
+    playerElement.style.left = `${x}px`;
+  
   }
 });
 
