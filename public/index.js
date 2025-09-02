@@ -224,5 +224,11 @@ document.addEventListener('mousemove', (event) => {
 
 });
 
+document.addEventListener('click', (event)=>{
+  const laser = document.createElement("div");
+  laser.classList = "laser";
+  
+});
+
 });
 
