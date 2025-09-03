@@ -224,10 +224,39 @@ document.addEventListener('mousemove', (event) => {
 
 });
 
-document.addEventListener('click', (event)=>{
-  const laser = document.createElement("div");
-  laser.classList = "laser";
-  
+document.addEventListener('click', (event) => {
+    const arena = document.getElementById("arena");
+    const arenaRect = arena.getBoundingClientRect(); // Pega informações de tamanho e posição da arena
+
+    // 1. Posição do centro do jogador
+    // (A variável 'pos' já guarda a posição top/left do seu jogador)
+    const playerCenterX = pos.left + (playerSize.x / 2);
+    const playerCenterY = pos.top + (playerSize.y / 2);
+
+    // 2. Posição do mouse relativa à arena
+    const mouseX = event.clientX - arenaRect.left;
+    const mouseY = event.clientY - arenaRect.top;
+
+    // 3. Calcula a diferença (delta) para encontrar o ângulo
+    const deltaX = mouseX - playerCenterX;
+    const deltaY = mouseY - playerCenterY;
+    const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI); // Converte radianos para graus
+
+    // 4. Cria e posiciona o laser
+    const laser = document.createElement("div");
+    laser.className = "laser"; // Use 'className' em vez de 'classList' para substituir todas as classes
+
+    // Define a origem da rotação e a posição inicial
+    laser.style.left = `${playerCenterX}px`;
+    laser.style.top = `${playerCenterY}px`;
+    laser.style.transformOrigin = '0% 50%'; // Faz o laser girar a partir do seu ponto inicial (esquerda)
+    laser.style.transform = `rotate(${angle}deg)`;
+
+    arena.appendChild(laser);
+
+    setTimeout(() => {
+        laser.remove();
+    }, 100);
 });
 
 });
