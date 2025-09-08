@@ -226,31 +226,58 @@ document.addEventListener('mousemove', (event) => {
 
 document.addEventListener('click', (event) => {
     const arena = document.getElementById("arena");
-    const arenaRect = arena.getBoundingClientRect(); // Pega informações de tamanho e posição da arena
+    const arenaRect = arena.getBoundingClientRect(); 
 
-    // 1. Posição do centro do jogador
-    // (A variável 'pos' já guarda a posição top/left do seu jogador)
+
     const playerCenterX = pos.left + (playerSize.x / 2);
     const playerCenterY = pos.top + (playerSize.y / 2);
 
-    // 2. Posição do mouse relativa à arena
     const mouseX = event.clientX - arenaRect.left;
     const mouseY = event.clientY - arenaRect.top;
 
-    // 3. Calcula a diferença (delta) para encontrar o ângulo
+
     const deltaX = mouseX - playerCenterX;
     const deltaY = mouseY - playerCenterY;
-    const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI); // Converte radianos para graus
+    const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
-    // 4. Cria e posiciona o laser
+
     const laser = document.createElement("div");
-    laser.className = "laser"; // Use 'className' em vez de 'classList' para substituir todas as classes
+    laser.className = "laser"; 
 
-    // Define a origem da rotação e a posição inicial
+
     laser.style.left = `${playerCenterX}px`;
     laser.style.top = `${playerCenterY}px`;
-    laser.style.transformOrigin = '0% 50%'; // Faz o laser girar a partir do seu ponto inicial (esquerda)
+    laser.style.transformOrigin = '0% 50%'; 
     laser.style.transform = `rotate(${angle}deg)`;
+
+    arena.appendChild(laser);
+
+    const laserInfo = {
+      laserX: playerCenterX,
+      laserY: playerCenterY,
+      Angle: angle
+    }
+
+    socket.emit("LaserBeam", laserInfo);
+
+
+    setTimeout(() => {
+        laser.remove();
+    }, 100);
+});
+
+
+socket.on('LaserPublic', (laserInfo)=>{
+    const arena = document.getElementById("arena");
+
+    const laser = document.createElement("div");
+    laser.className = "laser"; 
+
+
+    laser.style.left = `${laserInfo.laserX}px`;
+    laser.style.top = `${laserInfo.laserY}px`;
+    laser.style.transformOrigin = '0% 50%'; 
+    laser.style.transform = `rotate(${laserInfo.Angle}deg)`;
 
     arena.appendChild(laser);
 
@@ -258,6 +285,7 @@ document.addEventListener('click', (event) => {
         laser.remove();
     }, 100);
 });
+
 
 });
 

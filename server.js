@@ -71,6 +71,10 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('playerSpawn', playerObj);
     });
 
+    socket.on('LaserBeam', (laserInfo) => {
+        socket.broadcast.emit('LaserPublic', laserInfo)
+    });
+
 
 
 

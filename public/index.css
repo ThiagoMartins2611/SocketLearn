@@ -85,5 +85,6 @@ html{
 
     100%{
         box-shadow: 0 0 0;
+        height: 0;
     }
 }
