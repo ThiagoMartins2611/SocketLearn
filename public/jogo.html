@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>WebSocket chat</title>
-    <link rel="stylesheet" href="index.css">
-  </head>
-  <body id="body">
-    <div id="mouse">
-      <div id="point"></div>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>WebSocket chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body id="body">
+  <div id="mouse">
+    <div id="point"></div>
+  </div>
+
+  <div id="arena"></div>
+
+  <div id="hud">
+    <div id="cooldown-container">
+      <div id="cooldown-fill"></div>
     </div>
+    <div id="cooldown-text">Laser Ready</div>
+  </div>
+  <form id="form">
+    <ul id="messages"></ul>
+    <input id="input" autocomplete="off" />
 
-    <div id="arena"></div>
 
-    <form id="form">
-      <ul id="messages"></ul>
-      <input id="input" autocomplete="off" />
+    <button>Send</button>
 
-  
-      <button>Send</button>
+  </form>
 
-    </form>
 
-    
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="./index.js" type="module"></script>
-  </body>
-  
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./index.js" type="module"></script>
+</body>
+
 </html>

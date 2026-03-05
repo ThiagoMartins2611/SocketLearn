@@ -38,30 +38,30 @@ function generateColor() {
 }
 
 
-const ARENA_WIDTH = 1440; 
-const ARENA_HEIGHT = 720; 
+const ARENA_WIDTH = 1440;
+const ARENA_HEIGHT = 720;
 const PLAYER_SIZE = 50;
 const VELOCITY = 5;
 
 io.on('connection', (socket) => {
     console.log("usuário conectado");
-        const rawIp = socket.handshake.address;
-        const ipUser = rawIp.replace(/f/g, "").replace(/:/g, "");
-        const meuId = `player-${ipUser}-${Date.now()}`;
+    const rawIp = socket.handshake.address;
+    const ipUser = rawIp.replace(/f/g, "").replace(/:/g, "");
+    const meuId = `player-${ipUser}-${Date.now()}`;
 
     // Ouça o evento 'playerInfo' enviado pelo cliente
     socket.on('playerInfo', (info) => {
         const playerName = info.name;
-        
+
         // Aqui você pode continuar a criar o objeto do jogador
-     
         const playerObj = {
             id: meuId,
             name: playerName, // Adicione o nome ao objeto do jogador
             posX: 0,
             posY: 0,
             color: generateColor(),
-            ipUser
+            ipUser,
+            health: 3
         };
 
         players.push(playerObj);
@@ -72,9 +72,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('LaserBeam', (laserInfo) => {
-        socket.broadcast.emit('LaserPublic', laserInfo)
+        socket.broadcast.emit('LaserPublic', laserInfo);
     });
 
+    socket.on('playerHit', (targetId) => {
+        const targetPlayer = players.find(p => p.id === targetId);
+        if (targetPlayer && targetPlayer.health > 0) {
+            targetPlayer.health -= 1;
+            io.emit('healthUpdate', { id: targetId, health: targetPlayer.health });
+            if (targetPlayer.health <= 0) {
+                const index = players.findIndex(p => p.id === targetId);
+                if (index !== -1) {
+                    players.splice(index, 1);
+                }
+                io.emit('playerDisconnect', targetId);
+            }
+        }
+    });
 
 
 
@@ -83,7 +97,7 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('playerDisconnect', meuId);
         const index = players.findIndex(p => p.id === meuId);
         if (index !== -1) {
-            players.splice(index, 1); 
+            players.splice(index, 1);
         }
     });
 
@@ -91,7 +105,7 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 
-   socket.on('moveSquare', (pos) => {
+    socket.on('moveSquare', (pos) => {
         const player = players.find(p => p.id === meuId);
 
         if (player) {
@@ -104,7 +118,7 @@ io.on('connection', (socket) => {
             // Valida e restringe as coordenadas x e y
             const validatedX = Math.max(minX, Math.min(maxX, pos.x));
             const validatedY = Math.max(minY, Math.min(maxY, pos.y));
-            
+
             player.posX = validatedX;
             player.posY = validatedY;
 
@@ -123,6 +137,6 @@ io.on('connection', (socket) => {
 
 
 
-server.listen(7000, ()=>{
+server.listen(7000, () => {
     console.log("o servidor está rodadndo na porta: 7000, http://localhost:7000")
 });
